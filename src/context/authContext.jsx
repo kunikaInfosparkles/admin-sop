@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }) => {
     removeToken();
     sessionStorage.removeItem("refreshToken");
     setUser(null);
-    show
   };
 
   return (
