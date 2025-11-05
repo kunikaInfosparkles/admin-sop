@@ -5,7 +5,7 @@ import AdminLayout from "../components/layout/adminLayout";
 import { RoutesArray } from "./routeArray";
 import { PrivateRoute, PublicRoute } from "./authRoute";
 import { Login } from "../components";
-import { Dashboard, ExampleFormWithValidation } from "../pages";
+import { Dashboard, ExampleFormWithValidation, FileUploadExample, TableExample } from "../pages";
 
 const Router = () => {
   const router = createBrowserRouter([
@@ -33,6 +33,8 @@ const Router = () => {
           children: [
             { path: "", element: <Dashboard /> },
             { path: "forms", element: <ExampleFormWithValidation /> },
+            { path: "uploads", element: <FileUploadExample /> },
+            { path: "users", element: <TableExample /> },
           ],
         },
       ],

@@ -27,6 +27,7 @@ import {
   Assignment as AssignmentIcon,
   Logout as LogoutIcon,
   AccountCircle as AccountCircleIcon,
+  CloudUpload as CloudUploadIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
@@ -62,6 +63,7 @@ const AdminLayout = () => {
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
     { text: 'Users', icon: <PeopleIcon />, path: '/admin/users' },
     { text: 'Forms', icon: <AssignmentIcon />, path: '/admin/forms' },
+    { text: 'Uploads', icon: <CloudUploadIcon />, path: '/admin/uploads' },
     { text: 'Settings', icon: <SettingsIcon />, path: '/admin/settings' },
   ];
 
