@@ -2,8 +2,6 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import {
   Box,
-  Drawer,
-  AppBar,
   Toolbar,
   List,
   Typography,
@@ -17,6 +15,7 @@ import {
   MenuItem,
   Divider,
   useTheme,
+  styled,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -27,11 +26,94 @@ import {
   Assignment as AssignmentIcon,
   Logout as LogoutIcon,
   AccountCircle as AccountCircleIcon,
+  CloudUpload as CloudUploadIcon,
+  NotificationAddOutlined,
+  Insights,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
-
+import MuiDrawer from '@mui/material/Drawer';
+import MuiAppBar from '@mui/material/AppBar';
 const drawerWidth = 240;
+
+
+const openedMixin = (theme) => ({
+  width: drawerWidth,
+  transition: theme.transitions.create('width', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.enteringScreen,
+  }),
+  overflowX: 'hidden',
+});
+
+const closedMixin = (theme) => ({
+  transition: theme.transitions.create('width', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  overflowX: 'hidden',
+  width: `calc(${theme.spacing(7)} + 1px)`,
+  [theme.breakpoints.up('sm')]: {
+    width: `calc(${theme.spacing(8)} + 1px)`,
+  },
+});
+
+const AppBar = styled(MuiAppBar, {
+  shouldForwardProp: (prop) => prop !== 'open',
+})(({ theme }) => ({
+  zIndex: theme.zIndex.drawer + 1,
+  transition: theme.transitions.create(['width', 'margin'], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  variants: [
+    {
+      props: ({ open }) => open,
+      style: {
+        marginLeft: drawerWidth,
+        width: `calc(100% - ${drawerWidth}px)`,
+        transition: theme.transitions.create(['width', 'margin'], {
+          easing: theme.transitions.easing.sharp,
+          duration: theme.transitions.duration.enteringScreen,
+        }),
+      },
+    },
+  ],
+}));
+
+const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+  ({ theme }) => ({
+    width: drawerWidth,
+    flexShrink: 0,
+    whiteSpace: 'nowrap',
+    boxSizing: 'border-box',
+    variants: [
+      {
+        props: ({ open }) => open,
+        style: {
+          ...openedMixin(theme),
+          '& .MuiDrawer-paper': openedMixin(theme),
+        },
+      },
+      {
+        props: ({ open }) => !open,
+        style: {
+          ...closedMixin(theme),
+          '& .MuiDrawer-paper': closedMixin(theme),
+        },
+      },
+    ],
+  }),
+);
+const DrawerHeader = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-end',
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
+}));
+
 
 const AdminLayout = () => {
   const [open, setOpen] = useState(true);
@@ -40,9 +122,13 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  const handleDrawerToggle = () => {
-    setOpen(!open);
+  const handleDrawerOpen = () => {
+    setOpen(true);
   };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };;
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -60,43 +146,34 @@ const AdminLayout = () => {
 
   const menuItems = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
-    { text: 'Users', icon: <PeopleIcon />, path: '/admin/users' },
-    { text: 'Forms', icon: <AssignmentIcon />, path: '/admin/forms' },
-    { text: 'Settings', icon: <SettingsIcon />, path: '/admin/settings' },
+    { text: 'Users ', icon: <PeopleIcon />, path: '/admin/users' },
+    { text: 'Event', icon: <AssignmentIcon />, path: '/admin/forms' },
+    { text: 'Partner', icon: <CloudUploadIcon />, path: '/admin/uploads' },
+    { text: 'Reports & Safety', icon: <SettingsIcon />, path: '#/' },
+    { text: 'Notifications  ', icon: <NotificationAddOutlined />, path: '#/' },
+    { text: 'Analytics & Insights ', icon: <Insights />, path: '#/' },
   ];
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <AppBar
-        position="fixed"
-        sx={{
-          zIndex: theme.zIndex.drawer + 1,
-          transition: theme.transitions.create(['width', 'margin'], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-          }),
-          ...(open && {
-            marginLeft: drawerWidth,
-            width: `calc(100% - ${drawerWidth}px)`,
-            transition: theme.transitions.create(['width', 'margin'], {
-              easing: theme.transitions.easing.sharp,
-              duration: theme.transitions.duration.enteringScreen,
-            }),
-          }),
-        }}
-      >
+      <AppBar position="fixed" open={open}>
         <Toolbar>
           <IconButton
             color="inherit"
             aria-label="open drawer"
-            onClick={handleDrawerToggle}
+            onClick={handleDrawerOpen}
             edge="start"
-            sx={{ marginRight: 2 }}
+            sx={[
+              {
+                marginRight: 5,
+              },
+              open && { display: 'none' },
+            ]}
           >
-            {open ? <ChevronLeftIcon /> : <MenuIcon />}
+            <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Admin Panel
+            Mini variant drawer
           </Typography>
           <IconButton
             size="large"
@@ -139,32 +216,22 @@ const AdminLayout = () => {
           </Menu>
         </Toolbar>
       </AppBar>
-
-      <Drawer
-        variant="persistent"
-        open={open}
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: drawerWidth,
-            boxSizing: 'border-box',
-          },
-        }}
-      >
-        <Toolbar />
-        <Box sx={{ overflow: 'auto' }}>
-          <List>
-            {menuItems.map((item) => (
-              <ListItem key={item.text} disablePadding>
-                <ListItemButton onClick={() => navigate(item.path)}>
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-        </Box>
+      <Drawer variant="permanent" open={open}>
+        <DrawerHeader>
+          <IconButton onClick={handleDrawerClose}>
+            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+          </IconButton>
+        </DrawerHeader> 
+        <List>
+          {menuItems.map((item) => (
+            <ListItem key={item.text} disablePadding>
+              <ListItemButton onClick={() => navigate(item.path)}>
+                <ListItemIcon sx={{minWidth:'35px'}}>{item.icon}</ListItemIcon>
+                <ListItemText sx={{fontSize:'14px'}} primary={item.text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
       </Drawer>
 
       <Box

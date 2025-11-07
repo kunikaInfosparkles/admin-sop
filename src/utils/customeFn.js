@@ -1,4 +1,4 @@
-import { useSnackbar } from "../context/toasterContext.jsx";
+import toast from "react-hot-toast";
 import { getToken } from "./tokenUtils.js";
 
 export const resolveTime = 1000
@@ -11,53 +11,63 @@ export const getHeader = () => {
   };
   return config;
 };
+export const errorMsg = (message) => {
+  const msg = message || "Something went wrong";
+  toast.error(msg, { id: "error-toast" });
+  return message;
+};
 
-
-
-export const useAlertHelper = () => {
-  const { showMessage } = useSnackbar();
-  const successMsg = (msg) => showMessage(msg, "success");
-  const errorMsg = (msg) => showMessage(msg, "error");
-  const warningMsg = (msg) => showMessage(msg, "warning");
-
-  return { successMsg, errorMsg, warningMsg };
+export const successMsg = (message = "Success") => {
+  toast.success(message, { id: "success-toast" });
 };
 
 
-export const handleCatchErrors = (error, navigate, rejectWithValue, path) => {
+export const handleCatchErrors = (error, navigate) => {
+  const { status, data } = error.response || {};
 
-  if (error.code === "ERR_NETWORK") {
-    if (rejectWithValue) {
-      navigate("/");
-      return rejectWithValue(error.message);
+  if (error.response !== undefined) {
+    if (data?.message) {
+      errorMsg(data?.error?.detail || data?.message);
     }
-  } else {
-    const { status, data } = error.response || {}; 
-
-    if (error.response !== undefined) {
-      switch (status) {
+    switch (status) {
+      case 409:
+        if (data?.message) {
+          errorMsg(data?.message);
+        }
+        break;
         case 403:
-          break;
-        case 401:
-          break;
-        case 402:
-          break;
-        case 400:
-          break;
+        break;
+      case 401:
+        break;
+      case 402:
+        break;
+      case 400:
+        break;
         case 404:
           break;
-        case 422:
-          break;
-        case 500:
-          if (data.message) {
-            errorMsg(data.message);
-          }
-          break;
-        default:
-          navigate("/");
-      }
+      case 422:
+        break;
+      case 500:
+        break;
+      default:
+        // Don't redirect to home page on submission errors
+        // Let the component handle the error display
+        console.error('Unhandled error status:', status, data);
     }
   }
 };
 
+export const buildUrl = (baseUrl, params = {}) => {
+  let url = baseUrl;
+  const remainingParams = { ...params };
+  Object.keys(params).forEach((key) => {
+    const placeholder = `:${key}`;
+    if (url.includes(placeholder)) {
+      url = url.replace(placeholder, params[key]);
+      delete remainingParams[key]; // Remove used params
+    }
+  });
+  const query = new URLSearchParams(remainingParams).toString();
+  return query ? `${url}?${query}` : url;
+};
 

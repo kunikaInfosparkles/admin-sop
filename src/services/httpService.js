@@ -1,13 +1,12 @@
-// src/services/httpService.js
-import {getHeader, handleCatchErrors } from "../utils/customeFn";
+
 import axios from "./axios";
+import { getHeader, handleCatchErrors } from "../utils/customeFn";
 
 export const httpService = {
-  
   async get(url, navigate) {
     try {
       const config = { ...getHeader() };
-      return (await axios.get(url, config)).data;
+      return await axios.get(url, config);
     } catch (err) {
       return handleCatchErrors(err, navigate);
     }
@@ -15,7 +14,14 @@ export const httpService = {
 
   async post(url, data, navigate) {
     try {
-      return (await axios.post(url, data)).data;
+      return await axios.post(url, data);
+    } catch (err) {
+      return handleCatchErrors(err, navigate);
+    }
+  },
+  async put(url, data, navigate) {
+    try {
+      return await axios.put(url, data);
     } catch (err) {
       return handleCatchErrors(err, navigate);
     }
@@ -23,7 +29,7 @@ export const httpService = {
 
   async patch(url, data, navigate) {
     try {
-      return (await axios.patch(url, data)).data;
+      return await axios.patch(url, data);
     } catch (err) {
       return handleCatchErrors(err, navigate);
     }
@@ -31,7 +37,7 @@ export const httpService = {
 
   async delete(url, navigate) {
     try {
-      return (await axios.delete(url)).data;
+      return await axios.delete(url);
     } catch (err) {
       return handleCatchErrors(err, navigate);
     }

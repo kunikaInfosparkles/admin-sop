@@ -9,6 +9,7 @@ import {
   CheckboxInput,
   SwitchInput,
   AutocompleteInput,
+  PasswordInput,
 } from "../../components/formFields";
 import { Button, Grid, Typography, Paper, Box } from "@mui/material";
 
@@ -39,16 +40,11 @@ const schema = yup.object().shape({
   country: yup.string().required("Country is required"),
   department: yup
     .object()
-    .required("Department is required")
-    .nullable(),
+    .required("Department is required"),
   password: yup
     .string()
     .required("Password is required")
-    .min(8, "Password must be at least 8 characters")
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-      "Password must contain uppercase, lowercase, number and special character"
-    ),
+    .min(6, "Password must be at least 8 characters"),
   confirmPassword: yup
     .string()
     .required("Please confirm your password")
@@ -122,6 +118,7 @@ const ExampleFormWithValidation = () => {
               name="firstName"
               register={register}
               errors={errors}
+              staticLabel={true}
             />
           </Grid>
 
@@ -131,6 +128,8 @@ const ExampleFormWithValidation = () => {
               name="lastName"
               register={register}
               errors={errors}
+              staticLabel={true}
+
             />
           </Grid>
 
@@ -141,6 +140,8 @@ const ExampleFormWithValidation = () => {
               type="email"
               register={register}
               errors={errors}
+              staticLabel={true}
+
             />
           </Grid>
 
@@ -151,6 +152,8 @@ const ExampleFormWithValidation = () => {
               register={register}
               errors={errors}
               validation={false}
+              staticLabel={true}
+
             />
           </Grid>
 
@@ -161,6 +164,8 @@ const ExampleFormWithValidation = () => {
               register={register}
               errors={errors}
               placeholder="10 digits"
+              staticLabel={true}
+
             />
           </Grid>
 
@@ -171,6 +176,8 @@ const ExampleFormWithValidation = () => {
               register={register}
               errors={errors}
               options={countryOptions}
+              staticLabel={true}
+
             />
           </Grid>
 
@@ -181,26 +188,27 @@ const ExampleFormWithValidation = () => {
               control={control}
               options={departmentOptions}
               errors={errors}
+              staticLabel={true}
             />
           </Grid>
 
           <Grid size={{ xs: 12, md: 6 }}>
-            <TextInput
+            <PasswordInput
               label="Password"
               name="password"
-              type="password"
               register={register}
               errors={errors}
+              staticLabel={true}
             />
           </Grid>
 
           <Grid size={{ xs: 12, md: 6 }}>
-            <TextInput
+            <PasswordInput
               label="Confirm Password"
               name="confirmPassword"
-              type="password"
               register={register}
               errors={errors}
+              staticLabel={true}
             />
           </Grid>
 
@@ -210,6 +218,8 @@ const ExampleFormWithValidation = () => {
                 label="I agree to the terms and conditions"
                 name="terms"
                 register={register}
+                staticLabel={true}
+
               />
               {errors.terms && (
                 <Typography variant="caption" color="error" sx={{ ml: 4 }}>
@@ -224,6 +234,8 @@ const ExampleFormWithValidation = () => {
               label="Subscribe to newsletter"
               name="newsletter"
               register={register}
+              staticLabel={true}
+
             />
           </Grid>
 

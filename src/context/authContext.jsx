@@ -1,31 +1,53 @@
-import { createContext, use, useContext, useState } from "react";
-import { getToken, removeToken, setToken } from "../utils/tokenUtils";
+// hooks/useAuth.js
+import { useState, useEffect, createContext, useContext } from 'react';
+import { getToken, removeToken, setToken } from '../utils/tokenUtils';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  
-  const [user, setUser] = useState(() => {
-    const token = getToken();
-    return token ? { token } : null;
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const login = (token) => {
-    setToken(token);
-    setUser({ token });
+  useEffect(() => {
+    // Check if user is authenticated on app start
+    const token = getToken();
+    const user = localStorage.getItem('user');
+
+    if (token) {
+      setIsAuthenticated(true);
+      // Optional: Validate token with backend here
+    }
+
+    setIsLoading(false);
+  }, []);
+
+  const login = (userData) => {
+    setToken(userData);
+    setIsAuthenticated(true);
   };
 
   const logout = () => {
-    removeToken();
-    sessionStorage.removeItem("refreshToken");
-    setUser(null);
+    removeToken()
+    localStorage.removeItem('user');
+    setIsAuthenticated(false);
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout }}>
+    <AuthContext.Provider value={{
+      isAuthenticated,
+      isLoading,
+      login,
+      logout
+    }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};

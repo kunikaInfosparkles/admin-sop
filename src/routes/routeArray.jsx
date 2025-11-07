@@ -1,6 +1,10 @@
-import { ExampleForm, Home } from "../pages";
+import { Home } from "../pages";
+import { Dashboard, ExampleFormWithValidation, FileUploadExample, TableExample } from "../pages";
 
 export const RoutesArray = [
-  {path: "/", element: <Home />},
-  {path: "/form", element: <ExampleForm />},
+  { path: "", element: <Dashboard /> },
+  { path: "home", element: <Home /> },
+  { path: "forms", element: <ExampleFormWithValidation /> },
+  { path: "uploads", element: <FileUploadExample /> },
+  { path: "users", element: <TableExample /> },
 ];

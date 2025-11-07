@@ -1,10 +1,8 @@
 // src/services/apiHandler.js
 import { useState } from "react";
 import { httpService } from "./httpService";
-import { useSnackbar } from "../context/toasterContext";
 
 export const useApiHandler = () => {
-    const { showMessage } = useSnackbar();
     const [loading, setLoading] = useState(false);
 
     const callApi = async ({
