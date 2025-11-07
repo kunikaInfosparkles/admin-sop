@@ -121,6 +121,7 @@ const AdminLayout = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -184,7 +185,9 @@ const AdminLayout = () => {
             onClick={handleProfileMenuOpen}
             color="inherit"
           >
-            <Avatar sx={{ width: 32, height: 32 }}>A</Avatar>
+            <Avatar sx={{ width: 36, height: 36, fontSize: '0.875rem' }}>
+              A
+            </Avatar>
           </IconButton>
           <Menu
             id="profile-menu"
@@ -194,13 +197,23 @@ const AdminLayout = () => {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-            <MenuItem onClick={() => { navigate('/admin/profile'); handleProfileMenuClose(); }}>
+            <MenuItem
+              onClick={() => {
+                navigate('/admin/profile');
+                handleProfileMenuClose();
+              }}
+            >
               <ListItemIcon>
                 <AccountCircleIcon fontSize="small" />
               </ListItemIcon>
               Profile
             </MenuItem>
-            <MenuItem onClick={() => { navigate('/admin/settings'); handleProfileMenuClose(); }}>
+            <MenuItem
+              onClick={() => {
+                navigate('/admin/settings');
+                handleProfileMenuClose();
+              }}
+            >
               <ListItemIcon>
                 <SettingsIcon fontSize="small" />
               </ListItemIcon>
@@ -234,23 +247,60 @@ const AdminLayout = () => {
         </List>
       </Drawer>
 
+      <Drawer
+        variant="temporary"
+        open={open}
+        onClose={handleDrawerToggle}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          '& .MuiDrawer-paper': {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+          },
+        }}
+      >
+        <Toolbar sx={{ fontSize: '30px', fontWeight: 700 }}>Birdie</Toolbar>
+        <Box sx={{ overflow: 'auto' }}>
+          <List>
+            {menuItems.map((item) => (
+              <ListItem key={item.text} disablePadding>
+                <ListItemButton
+                  onClick={() => {
+                    navigate(item.path);
+                    handleDrawerToggle();
+                  }}
+                >
+                  <ListItemIcon>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.text} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Drawer>
+
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
+          p: { xs: 2, sm: 3 },
           transition: theme.transitions.create('margin', {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
           }),
-          marginLeft: `-${drawerWidth}px`,
-          ...(open && {
-            transition: theme.transitions.create('margin', {
-              easing: theme.transitions.easing.easeOut,
-              duration: theme.transitions.duration.enteringScreen,
+          marginLeft: {
+            xs: `-${drawerWidth}px`,
+            md: open ? 0 : `-${drawerWidth}px`,
+          },
+          width: '100%',
+          ...(open &&
+            !isMobile && {
+              transition: theme.transitions.create('margin', {
+                easing: theme.transitions.easing.easeOut,
+                duration: theme.transitions.duration.enteringScreen,
+              }),
+              marginLeft: 0,
             }),
-            marginLeft: 0,
-          }),
         }}
       >
         <Toolbar />
